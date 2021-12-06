@@ -19,7 +19,8 @@ public class Parser {
     public enum commandTypes {
         A_COMMAND,
         C_COMMAND,
-        L_COMMAND
+        L_COMMAND,
+        COMMENT_WHITESPACE
     }
 
     /**
@@ -49,7 +50,6 @@ public class Parser {
      */
     public void advance() {
         currentCommand = scanner.nextLine().trim();
-        System.out.println(currentCommand);
     }
 
     /**
@@ -58,7 +58,20 @@ public class Parser {
      * @return
      */
     public commandTypes commandType() {
-        return commandTypes.A_COMMAND;
+        if (currentCommand.isEmpty()) {
+            return commandTypes.COMMENT_WHITESPACE;
+        } else {
+            char firstChar = currentCommand.charAt(0);
+            if (firstChar == '@') {
+                return commandTypes.A_COMMAND;
+            } else if (firstChar == '(') {
+                return commandTypes.L_COMMAND;
+            } else if (firstChar == '/') {
+                return commandTypes.COMMENT_WHITESPACE;
+            } else {
+                return commandTypes.C_COMMAND;
+            }
+        }
     }
 
     /**
@@ -104,13 +117,30 @@ public class Parser {
     public void printFile() {
         while (hasMoreCommands()) {
             advance();
+            System.out.println(currentCommand);
+        }
+    }
+
+    public void printCommandType() {
+        while (hasMoreCommands()) {
+            advance();
+            if (commandType() == commandTypes.A_COMMAND) {
+                System.out.println("A_COMMAND");
+            } else if (commandType() == commandTypes.C_COMMAND) {
+                System.out.println("C_COMMAND");
+            } else if (commandType() == commandTypes.L_COMMAND) {
+                System.out.println("L_COMMAND");
+            } else {
+                System.out.println("COMMENT_WHITESPACE");
+            }
         }
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         File assemblyCode = new File("../add/Add1.asm");
         Parser parser = new Parser(assemblyCode);
-        parser.printFile();
+        // parser.printFile();
+        parser.printCommandType();
     }
 }
 
