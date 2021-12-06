@@ -100,8 +100,8 @@ public class Parser {
      */
     public String destination() {
         /*
-         dest is the first part of a C-instruction till the = sign
-         The extracted string is trimmed to remove spaces
+        dest is the first part of a C-instruction till the = sign
+        The extracted string is trimmed to remove spaces
          */
         String destinationMnemonic = currentCommand.substring(0, currentCommand.indexOf('='));
         destinationMnemonic = destinationMnemonic.trim();
@@ -119,8 +119,8 @@ public class Parser {
      */
     public String computation() {
         /*
-         comp is the second part of a C-instruction from the = sign to
-         the ; sign. All whitespaces are removed
+        comp is the second part of a C-instruction from the = sign to
+        the ; sign. All whitespaces are removed
          */
         String computationMnemonic = currentCommand.substring(currentCommand.indexOf('='), currentCommand.indexOf(';'));
         computationMnemonic = computationMnemonic.replaceAll(" ", "");
@@ -135,8 +135,8 @@ public class Parser {
      */
     public String jump() {
         /*
-         jump is the last part of a C-instruction from the ; sign to
-         the end of the string
+        jump is the last part of a C-instruction from the ; sign to
+        the end of the string
          */
         String jumpMnemonic = currentCommand.substring(currentCommand.indexOf(';'));
         jumpMnemonic = jumpMnemonic.trim();
