@@ -1,4 +1,6 @@
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 /**
  * Encapsulates access to the input code. Reads an assembly language command, parses it,
@@ -6,18 +8,20 @@ import java.io.File;
  * addition, removes all white space and comments.
  */
 public class Parser {
+    private final Scanner scanner;
+
     public enum commandTypes {
         A_COMMAND,
         C_COMMAND,
         L_COMMAND
     }
 
-    public Parser(File assemblyCode) {
-
+    public Parser(File assemblyCode) throws FileNotFoundException {
+        scanner = new Scanner(assemblyCode);
     }
 
     public boolean hasMoreCommands() {
-        return true;
+        return scanner.hasNextLine();
     }
 
     public commandTypes commandType() {
@@ -40,5 +44,16 @@ public class Parser {
         return "Jump";
     }
 
+    public void printFile() {
+        while (hasMoreCommands()) {
+            System.out.println(scanner.nextLine());
+        }
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        File assemblyCode = new File("../add/Add.asm");
+        Parser parser = new Parser(assemblyCode);
+        parser.printFile();
+    }
 }
 
