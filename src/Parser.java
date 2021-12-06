@@ -49,6 +49,7 @@ public class Parser {
      * no current command.
      */
     public void advance() {
+        // Trimming the string to remove spaces in the start and end
         currentCommand = scanner.nextLine().trim();
     }
 
@@ -59,6 +60,7 @@ public class Parser {
      */
     public commandTypes commandType() {
         if (currentCommand.isEmpty()) {
+            // After trimming, any blank line is reduced to an empty string
             return commandTypes.COMMENT_WHITESPACE;
         } else {
             char firstChar = currentCommand.charAt(0);
@@ -81,7 +83,13 @@ public class Parser {
      * @return
      */
     public String symbol() {
-        return "Symbol";
+        if (commandType() == commandTypes.A_COMMAND) {
+            return currentCommand.substring(1);
+        } else if (commandType() == commandTypes.C_COMMAND || commandType() == commandTypes.COMMENT_WHITESPACE) {
+            return "Wrong Command Type";
+        } else {
+            return currentCommand.substring(currentCommand.indexOf('(') + 1, currentCommand.indexOf(')'));
+        }
     }
 
     /**
@@ -90,8 +98,17 @@ public class Parser {
      *
      * @return
      */
-    public String dest() {
-        return "Destination";
+    public String destination() {
+        /*
+         dest is the first part of a C-instruction till the = sign
+         The extracted string is trimmed to remove spaces
+         */
+        String destinationMnemonic = currentCommand.substring(0, currentCommand.indexOf('='));
+        destinationMnemonic = destinationMnemonic.trim();
+        if (destinationMnemonic.isEmpty()) {
+            destinationMnemonic = "null";
+        }
+        return destinationMnemonic;
     }
 
     /**
@@ -100,8 +117,14 @@ public class Parser {
      *
      * @return
      */
-    public String comp() {
-        return "Computation";
+    public String computation() {
+        /*
+         comp is the second part of a C-instruction from the = sign to
+         the ; sign. All whitespaces are removed
+         */
+        String computationMnemonic = currentCommand.substring(currentCommand.indexOf('='), currentCommand.indexOf(';'));
+        computationMnemonic = computationMnemonic.replaceAll(" ", "");
+        return computationMnemonic;
     }
 
     /**
@@ -111,7 +134,13 @@ public class Parser {
      * @return
      */
     public String jump() {
-        return "Jump";
+        /*
+         jump is the last part of a C-instruction from the ; sign to
+         the end of the string
+         */
+        String jumpMnemonic = currentCommand.substring(currentCommand.indexOf(';'));
+        jumpMnemonic = jumpMnemonic.trim();
+        return jumpMnemonic;
     }
 
     public void printFile() {
@@ -125,11 +154,16 @@ public class Parser {
         while (hasMoreCommands()) {
             advance();
             if (commandType() == commandTypes.A_COMMAND) {
-                System.out.println("A_COMMAND");
+                String symbol = symbol();
+                System.out.println("A_COMMAND: " + symbol);
             } else if (commandType() == commandTypes.C_COMMAND) {
-                System.out.println("C_COMMAND");
+                String dest = "destination()";
+                String comp = "computation()";
+                String jump = "jump()";
+                System.out.println("C_COMMAND: " + dest + "\t" + comp + "\t" + jump);
             } else if (commandType() == commandTypes.L_COMMAND) {
-                System.out.println("L_COMMAND");
+                String symbol = symbol();
+                System.out.println("L_COMMAND: " + symbol);
             } else {
                 System.out.println("COMMENT_WHITESPACE");
             }
@@ -137,7 +171,7 @@ public class Parser {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        File assemblyCode = new File("../add/Add1.asm");
+        File assemblyCode = new File("../rect/Rect.asm");
         Parser parser = new Parser(assemblyCode);
         // parser.printFile();
         parser.printCommandType();
