@@ -25,7 +25,7 @@ public class HackAssembler {
     }
 
     public HackAssembler(String path) throws FileNotFoundException {
-        this.path = path.substring(0, path.lastIndexOf('/') + 1) + ".hack";
+        this.path = path.substring(0, path.lastIndexOf('.')) + ".hack";
         File assemblyCode = new File(path);
         parser = new Parser(assemblyCode); // Create a Parser object
         encoder = new Code(); // Create a Code object
