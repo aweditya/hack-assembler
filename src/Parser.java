@@ -215,11 +215,13 @@ public class Parser {
         }
     }
 
+    /*
     public static void main(String[] args) throws FileNotFoundException {
         File assemblyCode = new File("../pong/Pong.asm");
         Parser parser = new Parser(assemblyCode);
         // parser.printFile();
         parser.printCommandType();
     }
+     */
 }
 
