@@ -84,7 +84,12 @@ public class Parser {
      */
     public String symbol() {
         if (commandType() == commandTypes.A_COMMAND) {
-            return currentCommand.substring(1);
+            // Handling inline comments
+            if (currentCommand.indexOf('/') == -1) {
+                return currentCommand.substring(1);
+            } else {
+                return currentCommand.substring(1, currentCommand.indexOf('/')).trim();
+            }
         } else if (commandType() == commandTypes.L_COMMAND) {
             return currentCommand.substring(currentCommand.indexOf('(') + 1, currentCommand.indexOf(')'));
         } else {
@@ -104,9 +109,9 @@ public class Parser {
         The extracted string is trimmed to remove spaces
          */
         String destinationMnemonic = "null";
-        int equalsPosition = currentCommand.indexOf('=');
-        if (equalsPosition != -1) {
-            destinationMnemonic = currentCommand.substring(0, currentCommand.indexOf('='));
+        int equalSignPosition = currentCommand.indexOf('=');
+        if (equalSignPosition != -1) {
+            destinationMnemonic = currentCommand.substring(0, equalSignPosition);
             destinationMnemonic = destinationMnemonic.trim();
         }
         return destinationMnemonic;
@@ -139,8 +144,15 @@ public class Parser {
         jump is the last part of a C-instruction from the ; sign to
         the end of the string
          */
-        String jumpMnemonic = currentCommand.substring(currentCommand.indexOf(';'));
-        jumpMnemonic = jumpMnemonic.trim();
+        String jumpMnemonic = "null";
+        int semiColonPosition = currentCommand.indexOf(';');
+        if (semiColonPosition != -1) {
+            jumpMnemonic = currentCommand.substring(semiColonPosition + 1);
+            jumpMnemonic = jumpMnemonic.trim();
+            if (jumpMnemonic.indexOf('/') != -1) {
+                jumpMnemonic = jumpMnemonic.substring(0, jumpMnemonic.indexOf('/')).trim();
+            }
+        }
         return jumpMnemonic;
     }
 
@@ -160,7 +172,7 @@ public class Parser {
             } else if (commandType() == commandTypes.C_COMMAND) {
                 String dest = destination();
                 String comp = "computation()";
-                String jump = "jump()";
+                String jump = jump();
                 System.out.println("C_COMMAND: " + dest + "\t" + comp + "\t" + jump);
             } else if (commandType() == commandTypes.L_COMMAND) {
                 String symbol = symbol();
