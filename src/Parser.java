@@ -12,18 +12,6 @@ public class Parser {
     private String currentCommand;
 
     /**
-     * A_COMMAND for @XXX where XXX is either a symbol or a decimal number
-     * C_COMMAND for dest=comp;jump
-     * L_COMMAND (actually, pseudo-command) for (XXX) where XXX is a symbol.
-     */
-    public enum commandTypes {
-        A_COMMAND,
-        C_COMMAND,
-        L_COMMAND,
-        COMMENT_WHITESPACE
-    }
-
-    /**
      * Opens the input file/stream and gets ready to parse it.
      *
      * @param assemblyCode
@@ -58,20 +46,20 @@ public class Parser {
      *
      * @return
      */
-    public commandTypes commandType() {
+    public String commandType() {
         if (currentCommand.isEmpty()) {
             // After trimming, any blank line is reduced to an empty string
-            return commandTypes.COMMENT_WHITESPACE;
+            return "COMMENT_WHITESPACE";
         } else {
             char firstChar = currentCommand.charAt(0);
             if (firstChar == '@') {
-                return commandTypes.A_COMMAND;
+                return "A_COMMAND";
             } else if (firstChar == '(') {
-                return commandTypes.L_COMMAND;
+                return "L_COMMAND";
             } else if (firstChar == '/') {
-                return commandTypes.COMMENT_WHITESPACE;
+                return "COMMENT_WHITESPACE";
             } else {
-                return commandTypes.C_COMMAND;
+                return "C_COMMAND";
             }
         }
     }
@@ -83,14 +71,14 @@ public class Parser {
      * @return
      */
     public String symbol() {
-        if (commandType() == commandTypes.A_COMMAND) {
+        if (commandType().equals("A_COMMAND")) {
             // Handling inline comments
             if (currentCommand.indexOf('/') == -1) {
                 return currentCommand.substring(1);
             } else {
                 return currentCommand.substring(1, currentCommand.indexOf('/')).trim();
             }
-        } else if (commandType() == commandTypes.L_COMMAND) {
+        } else if (commandType().equals("L_COMMAND")) {
             return currentCommand.substring(currentCommand.indexOf('(') + 1, currentCommand.indexOf(')'));
         } else {
             return "Wrong Command Type";
@@ -198,15 +186,15 @@ public class Parser {
     public void printCommandType() {
         while (hasMoreCommands()) {
             advance();
-            if (commandType() == commandTypes.A_COMMAND) {
+            if (commandType().equals("A_COMMAND")) {
                 String symbol = symbol();
                 System.out.println("A_COMMAND: " + symbol);
-            } else if (commandType() == commandTypes.C_COMMAND) {
+            } else if (commandType().equals("C_COMMAND")) {
                 String dest = destination();
                 String comp = computation();
                 String jump = jump();
                 System.out.println("C_COMMAND: " + dest + "\t" + comp + "\t" + jump);
-            } else if (commandType() == commandTypes.L_COMMAND) {
+            } else if (commandType().equals("L_COMMAND")) {
                 String symbol = symbol();
                 System.out.println("L_COMMAND: " + symbol);
             } else {
@@ -222,6 +210,7 @@ public class Parser {
         // parser.printFile();
         parser.printCommandType();
     }
-     */
+ */
+
 }
 
