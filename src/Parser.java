@@ -128,8 +128,40 @@ public class Parser {
         comp is the second part of a C-instruction from the = sign to
         the ; sign. All whitespaces are removed
          */
-        String computationMnemonic = currentCommand.substring(currentCommand.indexOf('='), currentCommand.indexOf(';'));
-        computationMnemonic = computationMnemonic.replaceAll(" ", "");
+        String computationMnemonic;
+        boolean hasEqualSign = true, hasSemiColon = true;
+
+        // Check if the command has a destination or jump using '=' and ';' signs
+        if (currentCommand.indexOf('=') == -1) {
+            hasEqualSign = false;
+        }
+        if (currentCommand.indexOf(';') == -1) {
+            hasSemiColon = false;
+        }
+
+        if (hasEqualSign && hasSemiColon) {
+            computationMnemonic = currentCommand.substring(currentCommand.indexOf('=') + 1, currentCommand.indexOf(';'));
+            computationMnemonic = computationMnemonic.trim();
+        } else if (hasEqualSign) {
+            // Handling inline comments
+            if (currentCommand.indexOf('/') == -1) {
+                computationMnemonic = currentCommand.substring(currentCommand.indexOf('=') + 1);
+            } else {
+                computationMnemonic = currentCommand.substring(currentCommand.indexOf('=') + 1, currentCommand.indexOf('/'));
+                computationMnemonic = computationMnemonic.trim();
+            }
+        } else if (hasSemiColon) {
+            computationMnemonic = currentCommand.substring(0, currentCommand.indexOf(';'));
+            computationMnemonic = computationMnemonic.trim();
+        } else {
+            // Handling inline comments
+            if (currentCommand.indexOf('/') == -1) {
+                computationMnemonic = currentCommand;
+            } else {
+                computationMnemonic = currentCommand.substring(0, currentCommand.indexOf('/'));
+                computationMnemonic = computationMnemonic.trim();
+            }
+        }
         return computationMnemonic;
     }
 
@@ -171,7 +203,7 @@ public class Parser {
                 System.out.println("A_COMMAND: " + symbol);
             } else if (commandType() == commandTypes.C_COMMAND) {
                 String dest = destination();
-                String comp = "computation()";
+                String comp = computation();
                 String jump = jump();
                 System.out.println("C_COMMAND: " + dest + "\t" + comp + "\t" + jump);
             } else if (commandType() == commandTypes.L_COMMAND) {
@@ -184,7 +216,7 @@ public class Parser {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        File assemblyCode = new File("../rect/Rect.asm");
+        File assemblyCode = new File("../pong/Pong.asm");
         Parser parser = new Parser(assemblyCode);
         // parser.printFile();
         parser.printCommandType();
