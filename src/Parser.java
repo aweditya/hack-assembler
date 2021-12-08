@@ -85,10 +85,10 @@ public class Parser {
     public String symbol() {
         if (commandType() == commandTypes.A_COMMAND) {
             return currentCommand.substring(1);
-        } else if (commandType() == commandTypes.C_COMMAND || commandType() == commandTypes.COMMENT_WHITESPACE) {
-            return "Wrong Command Type";
-        } else {
+        } else if (commandType() == commandTypes.L_COMMAND) {
             return currentCommand.substring(currentCommand.indexOf('(') + 1, currentCommand.indexOf(')'));
+        } else {
+            return "Wrong Command Type";
         }
     }
 
@@ -103,10 +103,11 @@ public class Parser {
         dest is the first part of a C-instruction till the = sign
         The extracted string is trimmed to remove spaces
          */
-        String destinationMnemonic = currentCommand.substring(0, currentCommand.indexOf('='));
-        destinationMnemonic = destinationMnemonic.trim();
-        if (destinationMnemonic.isEmpty()) {
-            destinationMnemonic = "null";
+        String destinationMnemonic = "null";
+        int equalsPosition = currentCommand.indexOf('=');
+        if (equalsPosition != -1) {
+            destinationMnemonic = currentCommand.substring(0, currentCommand.indexOf('='));
+            destinationMnemonic = destinationMnemonic.trim();
         }
         return destinationMnemonic;
     }
@@ -157,7 +158,7 @@ public class Parser {
                 String symbol = symbol();
                 System.out.println("A_COMMAND: " + symbol);
             } else if (commandType() == commandTypes.C_COMMAND) {
-                String dest = "destination()";
+                String dest = destination();
                 String comp = "computation()";
                 String jump = "jump()";
                 System.out.println("C_COMMAND: " + dest + "\t" + comp + "\t" + jump);
