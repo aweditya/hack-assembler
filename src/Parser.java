@@ -175,42 +175,5 @@ public class Parser {
         }
         return jumpMnemonic;
     }
-
-    public void printFile() {
-        while (hasMoreCommands()) {
-            advance();
-            System.out.println(currentCommand);
-        }
-    }
-
-    public void printCommandType() {
-        while (hasMoreCommands()) {
-            advance();
-            if (commandType().equals("A_COMMAND")) {
-                String symbol = symbol();
-                System.out.println("A_COMMAND: " + symbol);
-            } else if (commandType().equals("C_COMMAND")) {
-                String dest = destination();
-                String comp = computation();
-                String jump = jump();
-                System.out.println("C_COMMAND: " + dest + "\t" + comp + "\t" + jump);
-            } else if (commandType().equals("L_COMMAND")) {
-                String symbol = symbol();
-                System.out.println("L_COMMAND: " + symbol);
-            } else {
-                System.out.println("COMMENT_WHITESPACE");
-            }
-        }
-    }
-
-    /*
-    public static void main(String[] args) throws FileNotFoundException {
-        File assemblyCode = new File("../pong/Pong.asm");
-        Parser parser = new Parser(assemblyCode);
-        // parser.printFile();
-        parser.printCommandType();
-    }
- */
-
 }
 
