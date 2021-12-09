@@ -1,16 +1,16 @@
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Keeps a correspondence between symbolic labels and numeric addresses
  */
 public class SymbolTable {
-    Hashtable<String, Integer> symbolTable;
+    HashMap<String, Integer> symbolTable;
 
     /**
      * Creates a new empty symbol table.
      */
     public SymbolTable() {
-        symbolTable = new Hashtable<>();
+        symbolTable = new HashMap<>();
 
         /**
          * Add predefined symbols
@@ -65,7 +65,7 @@ public class SymbolTable {
      * @return
      */
     public boolean contains(String symbol) {
-        return symbolTable.contains(symbol);
+        return symbolTable.containsKey(symbol);
     }
 
     /**
